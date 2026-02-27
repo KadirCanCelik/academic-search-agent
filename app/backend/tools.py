@@ -5,6 +5,7 @@ import arxiv
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain_community.document_transformers import Html2TextTransformer
+from tavily import TavilyClient
 
 
 
@@ -64,6 +65,40 @@ def fetch_url_content(url: str):
     if docs_transformed:
         return docs_transformed[0].page_content[0:4000]
     
+    return "Content could not be read"
+
+def search_web_tavily(query:str):
+
+    """
+    General web search using Tavily for technical blogs, documentation etc.
+    """
+
+    print(f"Searching on Web (Tavily): {query}")
+
+    client = TavilyClient()
+    response = client.search(query=query, max_results=5, search_depth="basic")
+
+    results = []
+    for result in response["results"]:
+        results.append(f"{result['title']}: {result['url']}")
+
+    return "\n".join(results) if results else "No results found"
+
+def fetch_url_tavily(url: str):
+
+    """
+    Go to the link and extract the content using Tavily extract
+    """
+
+    print(f"Reading (Tavily): {url}")
+
+    client = TavilyClient()
+    response = client.extract(urls=[url])
+
+    if response["results"]:
+        content = response["results"][0]["raw_content"]
+        return content[0:4000] if content else "Content could not be read"
+
     return "Content could not be read"
 
 if __name__ == "__main__":
