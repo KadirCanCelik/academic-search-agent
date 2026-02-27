@@ -15,7 +15,7 @@ from langchain_core.agents import AgentAction, AgentFinish
 from langchain_classic.agents.output_parsers import ReActSingleInputOutputParser
 from langchain_classic.agents.format_scratchpad import format_log_to_str
 
-from tools import search_arxiv, search_web, fetch_url_content
+from tools import search_arxiv, search_web, fetch_url_content, search_web_tavily, fetch_url_tavily
 
 load_dotenv()
 
@@ -57,17 +57,29 @@ except Exception as e:
 def safe_content_reader(input_text):
     """
     Validates the input string to ensure it is a proper URL.
-    This acts as a guardrail to catch cases where the LLM might 
+    This acts as a guardrail to catch cases where the LLM might
     accidentally pass a title instead of a direct link.
     """
     # Normalize the input by removing potential whitespaces or surrounding quotes
     url = str(input_text).strip().strip('"').strip("'")
-    
+
     # Ensure the string starts with a web protocol.
     if not url.startswith("http"):
         return f"ERROR: You provided a TITLE ('{url}'), but I need a valid URL starting with 'http'. Please check the 'link' field in the previous search results and copy that URL exactly."
-    
+
     return fetch_url_content(url)
+
+def safe_content_reader_tavily(input_text):
+    """
+    Validates the input string to ensure it is a proper URL.
+    Uses Tavily extract for content fetching.
+    """
+    url = str(input_text).strip().strip('"').strip("'")
+
+    if not url.startswith("http"):
+        return f"ERROR: You provided a TITLE ('{url}'), but I need a valid URL starting with 'http'. Please check the 'link' field in the previous search results and copy that URL exactly."
+
+    return fetch_url_tavily(url)
 
 tools = [
     Tool(
@@ -76,9 +88,19 @@ tools = [
         description="searches ArXiv. Returns a list of papers with 'title' and 'link'. Use the 'link' for reading."
     ),
     Tool(
+        name="Web_Search_Tavily",
+        func=search_web_tavily,
+        description="searches the web using Tavily. Input must be a simple keyword string. Use this as an alternative to Web_Search."
+    ),
+    Tool(
         name="Web_Search",
         func=search_web,
         description="searches the web. Input must be a simple keyword string."
+    ),
+    Tool(
+        name="Content_Reader_Tavily",
+        func=safe_content_reader_tavily,
+        description="Reads a webpage using Tavily. Input MUST be a valid HTTP URL (e.g., https://arxiv.org/...). DO NOT use article titles. Use this as an alternative to Content_Reader."
     ),
     Tool(
         name="Content_Reader",
