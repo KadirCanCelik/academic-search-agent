@@ -26,3 +26,8 @@ It is designed to automate academic literature reviews by intelligently searchin
 
 ## 📜 License
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+## 🌐 Live Demo & Deployment Notes  
+
+The project is deployed on Hugging Face Spaces. To overcome cloud environment limitations and IP restrictions, an ArXiv-Only optimization has been implemented for the live demo to guarantee consistent performance.
+* **Link:** https://huggingface.co/spaces/kadircancelik/Academic-Search
