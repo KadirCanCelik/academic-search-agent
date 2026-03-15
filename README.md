@@ -11,7 +11,7 @@ It is designed to automate academic literature reviews by intelligently searchin
 
 * **Hybrid Architecture:** Seamlessly combines a FastAPI backend with a Streamlit frontend for a responsive user experience.
 
-* **Open-Source LLM Power:** Leverages Hugging Face Inference API (Mistral-7B/Zephyr) to provide high-quality reasoning without high costs.
+* **Open-Source LLM Power:** Leverages Hugging Face Inference API (Mistral-7B) to provide high-quality reasoning without high costs.
 
 ## 🧩 Project Structure
 .  
