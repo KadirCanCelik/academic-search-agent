@@ -1,10 +1,16 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+import os
 import arxiv
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain_community.document_transformers import Html2TextTransformer
+
+try:
+    from tavily import TavilyClient
+except ImportError:
+    TavilyClient = None
 
 
 
@@ -37,6 +43,15 @@ def search_arxiv(query:str, max_results: int = 5):
 
     return results
 
+def _search_web_tavily(query: str):
+    """Search the web using Tavily API."""
+    client = TavilyClient()
+    response = client.search(query=query, max_results=5, search_depth="basic")
+    return "\n\n".join(
+        f"{r['title']}\n{r['url']}\n{r['content']}"
+        for r in response["results"]
+    )
+
 def search_web(query:str):
 
     """
@@ -44,6 +59,9 @@ def search_web(query:str):
     """
 
     print(f"Searching on Web: {query}")
+
+    if os.environ.get("TAVILY_API_KEY") and TavilyClient is not None:
+        return _search_web_tavily(query)
 
     search = DuckDuckGoSearchRun()
     return search.run(query)

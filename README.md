@@ -24,6 +24,23 @@ It is designed to automate academic literature reviews by intelligently searchin
 └── README.md           # Project documentation  
 └── start.sh            # Orchestration script to run Backend & Frontend concurrently  
 
+## ⚙️ Configuration
+
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `HUGGINGFACEHUB_API_TOKEN` | Yes | Hugging Face Inference API token for the LLM |
+| `TAVILY_API_KEY` | No | Tavily API key for web search. If set, Tavily is used instead of DuckDuckGo. Get a free key at https://app.tavily.com |
+
+To use Tavily as the web search provider, set the `TAVILY_API_KEY` environment variable:
+
+```bash
+export TAVILY_API_KEY="tvly-your-api-key"
+```
+
+If `TAVILY_API_KEY` is not set, DuckDuckGo is used as the default web search fallback.
+
 ## 📜 License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
